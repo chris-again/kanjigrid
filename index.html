@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanji Grid</title>
+    <script src="js/kanji.js"></script>
+    <script src="https://unpkg.com/wanakana"></script>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png" />
+    <link rel="shortcut icon" href="/assets/icons/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#fafafa" />
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="pixel-border"></div>
+
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+
+        <header>
+            <h1>漢字グリッド</h1>
+        </header>
+
+        <div class="controls" id="controlsPanel">
+            <div class="control-group">
+                <label>INPUT METHOD</label>
+                <div class="control-row">
+                    <div class="input-wrapper">
+                        <select id="inputMethod" autocomplete="off">
+                            <option value="index">KANJI SEQUENCE</option>
+                            <option value="custom">CUSTOM KANJI LIST</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group" id="indexInput">
+                <div class="control-row">
+                    <div class="input-wrapper">
+                        <label for="sourceSystem">From</label>
+                        <select id="sourceSystem" autocomplete="off">
+                            <option value="" disabled selected>SELECT SEQUENCE...</option>
+                            <option value="kanji_kentei_2020">KANJI KENTEI (2020)</option>
+                            <option value="japanese_school_grades">JAPANESE SCHOOL GRADES</option>
+                            <option value="jlpt_levels">JLPT LEVELS</option>
+                            <option value="kanji_learners_course">KANJI LEARNER'S COURSE</option>
+                        </select>
+                    </div>
+                    <div class="input-wrapper dropdown-checkbox">
+                        <label for="sourceLevelToggle">I know</label>
+                        <div class="dropdown-toggle" id="sourceLevelToggle">
+                            <span id="sourceLevelText">SELECT LEVELS...</span>
+                        </div>
+                        <div class="dropdown-menu" id="sourceLevelMenu"></div>
+                    </div>
+                    <div class="input-wrapper">
+                        <label for="progressIndex">or the first # KANJI</label>
+                        <div class="number-input">
+                            <input type="number" id="progressIndex" placeholder="kanji learned" min="0">
+                            <div class="buttons">
+                                <button class="btn-up">▲</button>
+                                <button class="btn-down">▼</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="control-group" id="customInput" style="display:none;">
+                <label>YOUR LEARNED KANJI (PASTE AS CONTINUOUS STRING)</label>
+                <textarea id="customKanji" placeholder="一二三四五六七八九十..."></textarea>
+            </div>
+
+            <div class="control-group">
+                <div class="control-row">
+                    <div class="input-wrapper">
+                        <label for="comparisonSystem">COMPARE my knowledge AGAINST</label>
+                        <select id="comparisonSystem" autocomplete="off">
+                            <option value="" disabled selected>SELECT SEQUENCE...</option>
+                            <option value="kanji_kentei_2020">KANJI KENTEI (2020)</option>
+                            <option value="japanese_school_grades">JAPANESE SCHOOL GRADES</option>
+                            <option value="jlpt_levels">JLPT LEVELS</option>
+                            <option value="kanji_learners_course">KANJI LEARNER'S COURSE</option>
+                        </select>
+                    </div>
+                    <div class="input-wrapper dropdown-checkbox">
+                        <label for="comparisonLevelToggle"></label>
+                        <div class="dropdown-toggle" id="comparisonLevelToggle">
+                            <span id="comparisonLevelText">SELECT LEVELS...</span>
+                        </div>
+                        <div class="dropdown-menu" id="comparisonLevelMenu"></div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <button id="visualizeBtn">SHOW GRID - グリッドを表示</button>
+
+        <div id="searchSection" style="display:none; margin: 20px 0;">
+            <div class="control-group">
+                <label>FILTER GRID</label>
+                <div class="control-row">
+                    <div class="input-wrapper" style="flex: 2;">
+                        <input type="text" id="kanjiSearchInput" placeholder="Type meaning or reading..."
+                            autocomplete="off">
+                    </div>
+                </div>
+
+                <div id="checkbox-group">
+                    <input type="checkbox" id="onyomi-checkbox" name="search-type" value="onyomi" autocomplete="off"
+                        onchange="handleCheckboxChange('onyomi')" />
+                    <label for="onyomi-checkbox"></label>
+                    <span style="margin-right: 2em;">Onyomi</span>
+
+                    <input type="checkbox" id="kunyomi-checkbox" name="search-type" value="kunyomi" autocomplete="off"
+                        onchange="handleCheckboxChange('kunyomi')" />
+                    <label for="kunyomi-checkbox"></label>
+                    <span>Kunyomi</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="statsSection" style="display:none;">
+            <div class="stats" id="stats"></div>
+        </div>
+
+        <div id="errorSection"></div>
+        <div id="kanjiGrid" class="kanji-grid"></div>
+    </div>
+
+    <div class="panels-container">
+        <div id="kanjiInfoPanel" class="kanji-info-panel">
+            <div id="kanjiInfoContent"></div>
+        </div>
+
+        <div id="jukugoPanel" class="jukugo-panel">
+            <h3>Words Found</h3>
+            <div id="jukugoPanelContent"></div>
+        </div>
+    </div>
+
+
+    <script type="module" src="js/main.js"></script>
+</body>
+
+</html>
