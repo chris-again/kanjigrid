@@ -571,7 +571,7 @@ textarea {
     background: var(--bg-primary);
     color: var(--text-primary);
     border: none;
-    padding: 20px 20px;
+    padding: 15px 15px;
     border-radius: 8px;
     font-family: 'Press Start 2P', monospace;
     cursor: pointer;
@@ -579,7 +579,6 @@ textarea {
     position: relative;
     transition: background-color 0.1s;
     margin: 0 auto;
-    margin-bottom: 15px;
     min-width: 200px;
 }
 
