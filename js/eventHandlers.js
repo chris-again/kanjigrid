@@ -12,7 +12,8 @@ import {
     toggleViewMode,
     showLoading,
     showError,
-    clearError
+    clearError,
+    setButtonEnabled
 } from './uiControls.js';
 import { renderKanjiGrid, renderStats, showStatsSection, showSearchSection } from './kanjiGrid.js';
 import { showKanjiInfo, hideKanjiInfo, hideJukugoPanel } from './kanjiInfo.js';
@@ -30,6 +31,15 @@ export function setupEventListeners() {
     setupOutsideClickListener();
     setupSearchListeners();
     setupProgressIndexListeners();
+
+    // Listener for Custom Kanji Textarea (needs to be checked on input)
+    document.getElementById(DOM_IDS.customKanji)?.addEventListener('input', checkCanVisualize);
+
+    //Listener for Level Checkbox changes (needs to be checked when menu state changes)
+    document.addEventListener('checkbox_state_change', checkCanVisualize);
+
+    // Initial check to disable the button on load
+    checkCanVisualize();
 }
 
 /**
@@ -38,6 +48,7 @@ export function setupEventListeners() {
 function setupInputMethodListeners() {
     document.getElementById(DOM_IDS.inputMethod).addEventListener('change', (e) => {
         switchInputMethod(e.target.value);
+        checkCanVisualize();
     });
 }
 
@@ -53,11 +64,13 @@ function setupSystemSelectListeners() {
     document.getElementById(DOM_IDS.sourceSystem).addEventListener('change', (e) => {
         updateCheckboxMenu(e.target.value, DOM_IDS.sourceLevelMenu, DOM_IDS.sourceLevelText);
         setToggleEnabled(DOM_IDS.sourceLevelToggle, true);
+        checkCanVisualize();
     });
 
     document.getElementById(DOM_IDS.comparisonSystem).addEventListener('change', (e) => {
         updateCheckboxMenu(e.target.value, DOM_IDS.comparisonLevelMenu, DOM_IDS.comparisonLevelText);
         setToggleEnabled(DOM_IDS.comparisonLevelToggle, true);
+        checkCanVisualize();
     });
 }
 
@@ -176,6 +189,10 @@ function setupProgressIndexListeners() {
         return;
     }
 
+    // Add listeners to the input field itself
+    progressInput.addEventListener('input', checkCanVisualize);
+    progressInput.addEventListener('change', checkCanVisualize);
+
     // Up button: increment value
     upButton.addEventListener('click', () => {
         const currentValue = parseInt(progressInput.value) || 0;
@@ -219,6 +236,53 @@ function getSelectedFiles(menuId) {
     const menu = document.getElementById(menuId);
     const checked = menu.querySelectorAll(`.${menuId}-level:checked`);
     return Array.from(checked).map(cb => cb.dataset.file);
+}
+
+
+/**
+ * Checks if all required options are selected/filled to enable the Visualize button.
+ */
+function checkCanVisualize() {
+    const inputMethod = document.getElementById(DOM_IDS.inputMethod)?.value;
+
+    // If the user hasn't selected an input method yet, it should fail validation immediately.
+    if (!inputMethod) {
+        setButtonEnabled(DOM_IDS.visualizeBtn, false);
+        return false;
+    }
+
+    // 1. Check Source (Your Kanji) Validity
+    let sourceValid = false;
+
+    if (inputMethod === 'custom') {
+        // Validation for Custom Input: Check if textarea has text
+        const customKanji = document.getElementById(DOM_IDS.customKanji)?.value || '';
+        sourceValid = customKanji.trim().length > 0;
+
+        // Add listener for this input if it's the active method
+        document.getElementById(DOM_IDS.customKanji)?.addEventListener('input', checkCanVisualize, { once: true });
+
+    } else { // 'index' method
+        const sourceSystem = document.getElementById(DOM_IDS.sourceSystem)?.value;
+        const sourceLevels = getSelectedFiles(DOM_IDS.sourceLevelMenu);
+        const progressIndex = document.getElementById(DOM_IDS.progressIndex)?.value;
+
+        // Valid if: System is selected AND (Levels are selected OR Index is entered)
+        sourceValid = !!sourceSystem && (sourceLevels.length > 0 || progressIndex);
+    }
+
+    // 2. Check Comparison Target Validity
+    const comparisonSystem = document.getElementById(DOM_IDS.comparisonSystem)?.value;
+    const comparisonLevels = getSelectedFiles(DOM_IDS.comparisonLevelMenu);
+
+    // Valid if: Comparison System is selected AND Levels are selected
+    const comparisonValid = !!comparisonSystem && comparisonLevels.length > 0;
+
+    const allValid = sourceValid && comparisonValid;
+
+    // Enable/disable the button based on the check
+    setButtonEnabled(DOM_IDS.visualizeBtn, allValid);
+    return allValid;
 }
 
 /**

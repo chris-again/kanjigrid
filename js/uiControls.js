@@ -100,6 +100,7 @@ export function updateCheckboxMenu(systemName, menuId, textId) {
     allCheckbox.addEventListener('change', (e) => {
         levelCheckboxes.forEach(cb => cb.checked = e.target.checked);
         updateDropdownText(menuId, textId);
+        document.dispatchEvent(new CustomEvent('checkbox_state_change'));
     });
 
     // Individual checkbox changes
@@ -111,6 +112,9 @@ export function updateCheckboxMenu(systemName, menuId, textId) {
             // The indeterminate property is part of HTMLInputElement, but setting it via JS works fine
             allCheckbox.indeterminate = !allChecked && !noneChecked;
             updateDropdownText(menuId, textId);
+
+            //dispatch custom event to notify eventHandlers.js
+            document.dispatchEvent(new CustomEvent('checkbox_state_change'));
         });
     });
 
@@ -243,4 +247,20 @@ export function clearError() {
         errorSection.innerHTML = '';
         errorSection.style.display = 'none';
     }
+}
+
+
+/**
+ * Enable/disable the primary Visualize button
+ */
+export function setButtonEnabled(buttonId, enabled) {
+    const button = document.getElementById(buttonId);
+    if (!button) return;
+
+    button.disabled = !enabled;
+    // Apply cyberpunk styling for disabled state
+    button.style.opacity = enabled ? 1 : 0.4;
+    button.style.cursor = enabled ? 'not-allowed' : 'pointer';
+
+    button.style.cursor = enabled ? 'pointer' : 'not-allowed';
 }

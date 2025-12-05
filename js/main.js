@@ -19,7 +19,7 @@ async function init() {
         // Only run testing defaults on your testing URL
         if (window.location.href.includes('127.0.0.1:1111')) {
             const { setTestingDefaults } = await import('./testing.js');
-            setTestingDefaults();
+            //setTestingDefaults();
         }
 
         // 3. Load JMDict dictionary in the background using the Web Worker for performance
