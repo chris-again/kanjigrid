@@ -16,9 +16,12 @@ export function initializeSystemControls() {
     if (!sourceSystemEl || !comparisonSystemEl || systemNames.length === 0) return;
 
     // 1. Populate System Dropdowns
-    const optionsHtml = systemNames.map(name =>
-        `<option value="${name}">${name.replace(/_/g, ' ')}</option>`
-    ).join('');
+    const optionsHtml =
+        `<option value="" disabled selected>Select system...</option>` +
+        systemNames.map(name =>
+            `<option value="${name}">${name.replace(/_/g, ' ')}</option>`
+        ).join('');
+
 
     sourceSystemEl.innerHTML = optionsHtml;
     comparisonSystemEl.innerHTML = optionsHtml;
@@ -63,8 +66,8 @@ export function updateCheckboxMenu(systemName, menuId, textId) {
     const menu = document.getElementById(menuId);
     const systems = getSystems();
 
-    if (!menu || !systems[systemName]) {
-        console.error(`System or menu element not found for ${systemName}`);
+    // Ignore placeholder system selections
+    if (!menu || !systemName || !systems[systemName]) {
         return;
     }
 
@@ -199,12 +202,12 @@ export function toggleViewMode() {
         // Switch back to Options
         controls.style.display = 'block';
         searchSection.style.display = 'none';
-        btn.textContent = 'SHOW GRID';
+        btn.textContent = 'SHOW GRID - グリッドを表示';
         return true; // Indicates switch to options
     } else {
         // Switch to Grid View
         controls.style.display = 'none';
-        btn.textContent = 'CHANGE OPTIONS';
+        btn.textContent = 'REGENERATE';
         return false; // Indicates switch to grid
     }
 }

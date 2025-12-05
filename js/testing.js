@@ -1,7 +1,7 @@
 // testing.js - Development/testing configuration
 
 import { DOM_IDS } from './config.js';
-import { updateCheckboxMenu, updateDropdownText } from './uiControls.js';
+import { updateDropdownText } from './uiControls.js';
 
 /**
  * Set testing defaults for development

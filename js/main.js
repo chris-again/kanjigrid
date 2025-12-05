@@ -16,10 +16,6 @@ async function init() {
         // 2. Initialize the Source/Comparison System dropdowns and associated level menus
         initializeSystemControls();
 
-        // // Initialize default checkbox menus
-        // updateCheckboxMenu('kanji_kentei_2020', DOM_IDS.sourceLevelMenu, DOM_IDS.sourceLevelText);
-        // updateCheckboxMenu('kanji_kentei_2020', DOM_IDS.comparisonLevelMenu, DOM_IDS.comparisonLevelText);
-
         // Only run testing defaults on your testing URL
         if (window.location.href.includes('127.0.0.1:1111')) {
             const { setTestingDefaults } = await import('./testing.js');

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanji Grid</title>
+    <script src="js/kanji.js"></script>
+    <script src="https://unpkg.com/wanakana"></script>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/icons/favicon-96x96.png" />
+    <link rel="shortcut icon" href="/assets/icons/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#fafafa" />
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="pixel-border"></div>
+
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+
+        <header>
+            <h1>漢字グリッド</h1>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 25%"></div>
+                <div class="progress-step active" onclick="switchStep(0)">
+                    <div class="progress-circle">1</div>
+                    <div class="progress-label">Input Method</div>
+                </div>
+                <div class="progress-step" onclick="switchStep(1)">
+                    <div class="progress-circle">2</div>
+                    <div class="progress-label">Your Kanji</div>
+                </div>
+                <div class="progress-step" onclick="switchStep(2)">
+                    <div class="progress-circle">3</div>
+                    <div class="progress-label">Compare</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls" id="controlsPanel">
+            <!-- Step 1: Input Method -->
+            <div class="control-group active" id="step0">
+                <div class="control-group-title">Choose Input Method</div>
+                <div class="control-group-description">Choose between a predefined list of kanji or a personal custom
+                    list.</div>
+
+                <div class="form-group">
+                    <label>Input Method</label>
+                    <select id="inputMethod" autocomplete="off">
+                        <option value="index">Predefined Kanji List</option>
+                        <option value="custom">Custom Kanji List</option>
+                    </select>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-text">
+                        <p>Tip: the following predefined kanji lists are available for you to choose from:</p>
+                        <ul>
+                            <li>Japanese School Grades</li>
+                            <li>JLPT levels</li>
+                            <li>Kanji Learner's Course</li>
+                            <li>Jouyou (2020 revision)</li>
+                            <li>JLPT levels (revised)</li>
+                            <li>Frequency in media</li>
+                            <li>Kanji Kentei</li>
+                            <li>Kanji Kentei (2020 revision)</li>
+                            <li>Remembering the Kanji - 1st Edition</li>
+                            <li>Remembering the Kanji - 6th Edition</li>
+                            <li>Kanji in Context</li>
+                            <li>Hadamitzky/Spahn book</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2a: Predefined List -->
+            <div class="control-group" id="step1" data-mode="index">
+                <div class="control-group-title">Your Kanji Source</div>
+                <div class="control-group-description">Select your learning system and the levels you've completed.
+                </div>
+
+                <div id="indexInput">
+                    <div class="form-group">
+                        <label for="sourceSystem">Learning System</label>
+                        <select id="sourceSystem" autocomplete="off">
+                            <option value="" disabled selected>SELECT SEQUENCE...</option>
+                            <option value="kanji_kentei_2020">KANJI KENTEI (2020)</option>
+                            <option value="japanese_school_grades">JAPANESE SCHOOL GRADES</option>
+                            <option value="jlpt_levels">JLPT LEVELS</option>
+                            <option value="kanji_learners_course">KANJI LEARNER'S COURSE</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sourceLevelToggle">Levels Completed</label>
+                        <div class="dropdown-checkbox">
+                            <div class="dropdown-toggle" id="sourceLevelToggle">
+                                <span id="sourceLevelText">select levels...</span>
+                            </div>
+                            <div class="dropdown-menu" id="sourceLevelMenu"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="progressIndex">
+                            Or Specify Number of Kanji
+                            <span class="label-hint">Leave empty to use all kanji from selected levels</span>
+                        </label>
+                        <div class="number-input">
+                            <input type="number" id="progressIndex" placeholder="e.g., 500" min="0" autocomplete="off">
+                            <div class="buttons">
+                                <button class="btn-up">▲</button>
+                                <button class="btn-down">▼</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2b: Custom Kanji -->
+            <div class="control-group" id="step1-custom" data-mode="custom">
+                <div class="control-group-title">Paste the kanji you know</div>
+                <div class="control-group-description"> </div>
+
+                <div id="customInput">
+                    <div class="form-group">
+                        <label for="customKanji">
+                            Paste here!
+                            <span class="label-hint">I know these kanji:</span>
+                        </label>
+                        <textarea id="customKanji" placeholder="一二三四五六七八九十日月火水木金土..." autocomplete="off"></textarea>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-box-text">
+                            Tip: you can paste any text. Only kanji will be extracted!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Comparison -->
+            <div class="control-group" id="step2">
+                <div class="control-group-title">Comparison Target</div>
+                <div class="control-group-description">Choose which system you want to compare your knowledge against.
+                </div>
+
+                <div class="form-group">
+                    <label for="comparisonSystem">Target System</label>
+                    <select id="comparisonSystem" autocomplete="off">
+                        <option value="" disabled selected>SELECT SEQUENCE...</option>
+                        <option value="kanji_kentei_2020">KANJI KENTEI (2020)</option>
+                        <option value="japanese_school_grades">JAPANESE SCHOOL GRADES</option>
+                        <option value="jlpt_levels">JLPT LEVELS</option>
+                        <option value="kanji_learners_course">KANJI LEARNER'S COURSE</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="comparisonLevelToggle">Target Levels</label>
+                    <div class="dropdown-checkbox">
+                        <div class="dropdown-toggle" id="comparisonLevelToggle">
+                            <span id="comparisonLevelText">select levels...</span>
+                        </div>
+                        <div class="dropdown-menu" id="comparisonLevelMenu"></div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-text">
+                        The grid will highlight which kanji you know vs. which ones appear in your target levels.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="searchSection" style="display:none; margin: 20px 0;">
+            <label>FILTER GRID</label>
+            <div class="control-row">
+                <div class="input-wrapper" style="flex: 2;">
+                    <input type="text" id="kanjiSearchInput" placeholder="Type meaning or reading..."
+                        autocomplete="off">
+                </div>
+            </div>
+
+            <div id="checkbox-group">
+                <input type="checkbox" id="onyomi-checkbox" name="search-type" value="onyomi" autocomplete="off"
+                    onchange="handleCheckboxChange('onyomi')" />
+                <label for="onyomi-checkbox"></label>
+                <span style="margin-right: 2em;">Onyomi</span>
+
+                <input type="checkbox" id="kunyomi-checkbox" name="search-type" value="kunyomi" autocomplete="off"
+                    onchange="handleCheckboxChange('kunyomi')" />
+                <label for="kunyomi-checkbox"></label>
+                <span>Kunyomi</span>
+            </div>
+        </div>
+
+        <div class="btn-wrapper">
+            <button id="visualizeBtn">SHOW GRID - グリッドを表示</button>
+        </div>
+
+
+        <div id="statsSection" style="display:none;">
+            <div class="stats" id="stats"></div>
+        </div>
+
+        <div id="errorSection"></div>
+        <div id="kanjiGrid" class="kanji-grid"></div>
+    </div>
+
+    <div class="panels-container">
+        <div id="kanjiInfoPanel" class="kanji-info-panel">
+            <div id="kanjiInfoContent"></div>
+        </div>
+
+        <div id="jukugoPanel" class="jukugo-panel">
+            <h3>Words Found</h3>
+            <div id="jukugoPanelContent"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+
+        // Switch between steps
+        function switchStep(stepIndex) {
+            currentStep = stepIndex;
+
+            // Update progress bar
+            const steps = document.querySelectorAll('.progress-step');
+            steps.forEach((step, i) => {
+                step.classList.toggle('active', i === stepIndex);
+            });
+
+            const progress = ((stepIndex + 1) / 3) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            // Update visible content based on step and input method
+            const inputMethod = document.getElementById('inputMethod').value;
+
+            document.getElementById('step0').classList.toggle('active', stepIndex === 0);
+
+            if (stepIndex === 1) {
+                document.getElementById('step1').classList.toggle('active', inputMethod === 'index');
+                document.getElementById('step1-custom').classList.toggle('active', inputMethod === 'custom');
+            } else {
+                document.getElementById('step1').classList.remove('active');
+                document.getElementById('step1-custom').classList.remove('active');
+            }
+
+            document.getElementById('step2').classList.toggle('active', stepIndex === 2);
+        }
+
+        document.querySelectorAll('.progress-step').forEach((stepEl, index) => {
+            stepEl.addEventListener('click', () => {
+                // show the requested step content
+                switchStep(index);
+
+                // mirror the "show options" branch of toggleViewMode()
+                const controls = document.getElementById('controlsPanel');
+                const searchSection = document.getElementById('searchSection');
+                const btn = document.getElementById('visualizeBtn');
+                if (!controls || !btn) return;
+
+                // If controls are hidden (Grid View), reveal them
+                // use getComputedStyle to catch cases where style.display wasn't set inline
+                const controlsHidden = getComputedStyle(controls).display === 'none' || controls.style.display === 'none';
+                if (controlsHidden) {
+                    controls.style.display = 'block';
+                    if (searchSection) searchSection.style.display = 'none';
+                    btn.textContent = 'SHOW GRID - グリッドを表示';
+                }
+            });
+        });
+
+
+
+        // Handle input method change
+        document.getElementById('inputMethod').addEventListener('change', function () {
+            // If we're on step 1, update the visible content
+            if (currentStep === 1) {
+                switchStep(1);
+            }
+        });
+
+    </script>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+
+</html>
