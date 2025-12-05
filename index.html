@@ -35,18 +35,18 @@
         <!-- Progress Bar -->
         <div class="progress-container">
             <div class="progress-bar">
-                <div class="progress-fill" id="progressFill" style="width: 25%"></div>
-                <div class="progress-step active" onclick="switchStep(0)">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                <div class="progress-step" onclick="switchStep(0)">
                     <div class="progress-circle">1</div>
-                    <div class="progress-label">Input Method</div>
+                    <div class="step-description">Input Method</div>
                 </div>
                 <div class="progress-step" onclick="switchStep(1)">
                     <div class="progress-circle">2</div>
-                    <div class="progress-label">Your Kanji</div>
+                    <div class="step-description">Your Kanji</div>
                 </div>
                 <div class="progress-step" onclick="switchStep(2)">
                     <div class="progress-circle">3</div>
-                    <div class="progress-label">Compare</div>
+                    <div class="step-description">Compare</div>
                 </div>
             </div>
         </div>
@@ -61,6 +61,7 @@
                 <div class="form-group">
                     <label>Input Method</label>
                     <select id="inputMethod" autocomplete="off">
+                        <option value="" disabled selected>Select...</option>
                         <option value="index">Predefined Kanji List</option>
                         <option value="custom">Custom Kanji List</option>
                     </select>
@@ -238,8 +239,20 @@
     <script>
         let currentStep = 0;
 
+
+        function isStep1Valid() {
+            // Check if inputMethod is selected (it won't be "" if user has selected a valid option)
+            const inputMethod = document.getElementById('inputMethod')?.value;
+            return !!inputMethod;
+        }
+
         // Switch between steps
         function switchStep(stepIndex) {
+            // Prevent switching to Step 2 or 3 if Step 1 is invalid
+            if ((stepIndex === 1 || stepIndex === 2) && !isStep1Valid() && stepIndex > currentStep) {
+                // Only prevent moving forward if validation fails
+                return;
+            }
             currentStep = stepIndex;
 
             // Update progress bar
@@ -265,6 +278,20 @@
             }
 
             document.getElementById('step2').classList.toggle('active', stepIndex === 2);
+        }
+
+        function updateStepVisibility() {
+            const valid = isStep1Valid();
+            const step2El = document.querySelectorAll('.progress-step')[1]; // Index 1 is Step 2
+            const step3El = document.querySelectorAll('.progress-step')[2]; // Index 2 is Step 3
+
+            if (step2El) step2El.classList.toggle('disabled', !valid);
+            if (step3El) step3El.classList.toggle('disabled', !valid);
+
+            // If we're on Step 1, but the input became invalid (e.g., reset)
+            if (!valid && currentStep !== 0) {
+                switchStep(0);
+            }
         }
 
         document.querySelectorAll('.progress-step').forEach((stepEl, index) => {
@@ -297,7 +324,9 @@
             if (currentStep === 1) {
                 switchStep(1);
             }
+            updateStepVisibility();
         });
+        updateStepVisibility();
 
     </script>
 
