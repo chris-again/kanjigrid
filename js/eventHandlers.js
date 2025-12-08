@@ -399,34 +399,22 @@ function setupProgressStepListeners() {
     // Listener for Source System (Part of Step 2 - Index Mode, triggers Step 3 Auto-Advance)
     document.getElementById('sourceSystem').addEventListener('change', function () {
         updateStepVisibility();
-        if (isStep2Valid() && currentStep === 1) {
-            switchStep(2);
-        }
     });
 
     // Listener for Progress Index (Part of Step 2 - Index Mode, triggers Step 3 Auto-Advance)
     document.getElementById('progressIndex').addEventListener('input', function () {
         updateStepVisibility();
-        if (isStep2Valid() && currentStep === 1) {
-            switchStep(2);
-        }
     });
 
     // Listener for Custom Kanji (Completes Step 2 - Custom Mode, triggers Step 3 Auto-Advance)
     document.getElementById('customKanji').addEventListener('input', function () {
         updateStepVisibility();
-        if (isStep2Valid() && currentStep === 1) {
-            switchStep(2);
-        }
     });
 
     // 1. Listener for Source Levels (Part of Step 2 - Index Mode, triggers Step 3 Auto-Advance)
     document.getElementById('sourceLevelMenu').addEventListener('change', function (event) {
         if (event.target.type === 'checkbox') {
             updateStepVisibility();
-            if (isStep2Valid() && currentStep === 1) {
-                switchStep(2);
-            }
         }
     });
 
