@@ -31,6 +31,7 @@ export function setupEventListeners() {
     setupOutsideClickListener();
     setupSearchListeners();
     setupProgressIndexListeners();
+    setupMobilePanelListeners();
 
     // Listener for Custom Kanji Textarea (needs to be checked on input)
     document.getElementById(DOM_IDS.customKanji)?.addEventListener('input', checkCanVisualize);
@@ -149,13 +150,17 @@ function setupKanjiClickListener() {
  */
 function setupOutsideClickListener() {
     document.addEventListener('click', (e) => {
-        const panel = document.getElementById(DOM_IDS.kanjiInfoPanel);
-        const clickedInsidePanel = panel.contains(e.target);
-        const clickedKanji = e.target.closest('.kanji');
+        const panelContainer = document.getElementById('panelsContainer');
 
-        if (!clickedInsidePanel && !clickedKanji) {
+        // If we click outside the container AND not on a kanji
+        if (panelContainer.classList.contains('active') &&
+            !panelContainer.contains(e.target) &&
+            !e.target.closest('.kanji')) {
+
+            // Trigger the hide
             hideKanjiInfo();
             hideJukugoPanel();
+            panelContainer.classList.remove('active');
         }
     });
 }
@@ -284,6 +289,88 @@ function checkCanVisualize() {
     setButtonEnabled(DOM_IDS.visualizeBtn, allValid);
     return allValid;
 }
+
+/**
+ * Universal Panel Handlers (Close btn & Drag)
+ */
+function setupMobilePanelListeners() {
+    const panelsContainer = document.getElementById('panelsContainer');
+    const closeBtn = document.getElementById('panelCloseBtn');
+    const panelHeader = document.getElementById('panelHeader');
+
+    if (!panelsContainer || !closeBtn || !panelHeader) return;
+
+    let startY = 0;
+    let currentY = 0;
+    let isDragging = false;
+
+    const hidePanels = () => {
+        panelsContainer.classList.remove('active');
+        panelsContainer.style.transform = '';
+        setTimeout(() => {
+            // 3. Perform internal cleanup (clearing content, resetting internal display: none)
+            hideKanjiInfo();
+            hideJukugoPanel();
+        }, 300); // Wait for the 0.3s transition
+    };
+
+    // 1. Close Button Logic
+    closeBtn.addEventListener('click', () => {
+        hidePanels();
+    });
+
+
+    const handleStart = (y) => {
+        startY = y;
+        isDragging = true;
+        panelsContainer.style.transition = 'none'; // Remove lag for direct 1:1 movement
+    };
+
+    const handleMove = (y) => {
+        if (!isDragging) return;
+        const deltaY = y - startY;
+        // Only allow dragging down (positive values)
+        if (deltaY > 0) {
+            panelsContainer.style.transform = `translateY(${deltaY}px)`;
+        }
+    };
+
+    const handleEnd = (y) => {
+        if (!isDragging) return;
+        isDragging = false;
+        panelsContainer.style.transition = 'transform 0.3s cubic-bezier(0.19, 1, 0.22, 1)';
+
+        const deltaY = y - startY;
+
+        if (deltaY > 100) {
+            hidePanels(); 
+        } else {
+            panelsContainer.style.transform = 'translateY(0)';
+            setTimeout(() => {
+                panelsContainer.style.transform = '';
+            }, 350);
+        }
+    };
+
+    // --- Touch Events ---
+    panelHeader.addEventListener('touchstart', (e) => handleStart(e.touches[0].clientY));
+    panelHeader.addEventListener('touchmove', (e) => handleMove(e.touches[0].clientY));
+    panelHeader.addEventListener('touchend', (e) => handleEnd(e.changedTouches[0].clientY));
+
+    // --- Mouse Events (for Desktop Dragging) ---
+    panelHeader.addEventListener('mousedown', (e) => handleStart(e.clientY));
+    window.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+            e.preventDefault(); // prevent selecting text while dragging
+            handleMove(e.clientY);
+        }
+    });
+    window.addEventListener('mouseup', (e) => {
+        if (isDragging) handleEnd(e.clientY);
+    });
+}
+
+
 
 /**
  * Make handleCheckboxChange available globally for HTML onclick handlers

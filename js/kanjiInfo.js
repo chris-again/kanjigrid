@@ -3,6 +3,28 @@
 import { DOM_IDS } from './config.js';
 import { fetchJukugoDetailsInWorker } from './dataLoader.js';
 
+
+
+/**
+ * Helper function to manage the visibility of the whole panel wrapper.
+ * @param {boolean} show - true to show (add .active), false to hide (remove .active)
+ */
+function setPanelsContainerVisibility(show) {
+  if (!panelsContainer) return;
+
+  if (show) {
+    panelsContainer.classList.add('active');
+  } else {
+    // Only hide the container if *both* kanjiInfoPanel and jukugoPanel are meant to be hidden.
+    // Handling inside hideKanjiInfo and hideJukugoPanel.
+    // For now, call helper with `true` when showing.
+    // The individual hide functions will call .classList.remove('active').
+  }
+}
+
+
+
+
 /**
  * Show kanji information panel
  */
@@ -14,11 +36,13 @@ export function showKanjiInfo(kanji) {
 
   if (!data) {
     panel.style.display = 'block';
+    setPanelsContainerVisibility(true);
     content.innerHTML = `<p>No data available</p>`;
     return;
   }
 
   panel.style.display = 'block';
+  setPanelsContainerVisibility(true);
   content.innerHTML = `
         <h2>${kanji}</h2>
         <div class="kanji-details">
@@ -45,21 +69,29 @@ export function showKanjiInfo(kanji) {
  * Hide kanji information panel
  */
 export function hideKanjiInfo() {
-  const panel = document.getElementById(DOM_IDS.kanjiInfoPanel);
-  panel.style.display = 'none';
+  const kanjiInfoPanel = document.getElementById(DOM_IDS.kanjiInfoPanel);
+  const jukugoPanel = document.getElementById(DOM_IDS.jukugoPanel);
+
+  kanjiInfoPanel.style.display = 'none';
+
+  // Check if the other panel (Jukugo) is also hidden. If both are hidden,
+  // the main container can be hidden to trigger the slide-down animation.
+  if (panelsContainer && jukugoPanel.style.display === 'none') {
+    panelsContainer.classList.remove('active');
+  }
 }
 
 /**
  * Show jukugo (compound words) panel - ASYNCHRONOUS
  * @param {string} reading - The user's input (Romaji/Kana)
- * @param {string} clickedKanji - The specific kanji character clicked in the grid. (NEW PARAMETER)
+ * @param {string} clickedKanji - The specific kanji character clicked in the grid.
  */
 export function showJukugoWords(reading, clickedKanji) {
-  const panel = document.getElementById(DOM_IDS.jukugoPanel);
+  const jukugoPanel = document.getElementById(DOM_IDS.jukugoPanel);
   const content = document.getElementById(DOM_IDS.jukugoPanelContent);
 
   if (typeof wanakana === 'undefined' || !reading) {
-    panel.style.display = 'none';
+    jukugoPanel.style.display = 'none';
     return;
   }
 
@@ -67,24 +99,21 @@ export function showJukugoWords(reading, clickedKanji) {
 
   // 1. Show loading state and panel
   content.innerHTML = `
-        <div class="text-center py-4 text-sm text-gray-500 animate-pulse">
-            Searching for Jukugo words matching: ${hiraganaReading}...
-        </div>
-    `;
-  panel.style.display = 'block';
+<div class="text-center py-4 text-sm text-gray-500 animate-pulse">
+Searching for Jukugo words matching: ${hiraganaReading}...
+</div>
+`;
+  jukugoPanel.style.display = 'block';
+  setPanelsContainerVisibility(true); // Show the parent container
 
-  // 2. Call worker asynchronously to fetch the detailed entries (all words matching the reading)
+  // 2. Call worker asynchronously to fetch the detailed entries
   fetchJukugoDetailsInWorker(hiraganaReading, (matchingWords) => {
 
     // --- NEW FILTERING STEP ---
-    // Filter the words down to only those that contain the clicked kanji.
     const filteredWords = matchingWords.filter(entry => {
       if (!entry.kanji || entry.kanji.length === 0) {
-        // If it's a kana-only word, it can't contain the clicked kanji
         return false;
       }
-
-      // Check if the clicked kanji exists in the kanji text field of the entry
       return entry.kanji.some(k => k.text.includes(clickedKanji));
     });
     // --- END NEW FILTERING STEP ---
@@ -92,10 +121,10 @@ export function showJukugoWords(reading, clickedKanji) {
 
     if (!filteredWords || filteredWords.length === 0) {
       content.innerHTML = `
-                <div class="text-center py-4 text-sm text-gray-500">
-                    No Jukugo words containing "${clickedKanji}" found for reading "${reading}".
-                </div>
-            `;
+<div class="text-center py-4 text-sm text-gray-500">
+No Jukugo words containing "${clickedKanji}" found for reading "${reading}".
+</div>
+`;
       return;
     }
 
@@ -125,16 +154,16 @@ export function showJukugoWords(reading, clickedKanji) {
         : 'No definition available';
 
       html += `
-                <div class="jukugo-word border-b border-gray-200 p-2">
-                    <div class="jukugo-word-kanji text-xl font-bold text-blue-700">${kanjiText}</div>
-                    <div class="jukugo-word-reading text-sm text-gray-600">${readingText}</div>
-                    <div class="jukugo-word-meaning text-xs mt-1">${meaningText}</div>
-                </div>
-            `;
+<div class="jukugo-word border-b border-gray-200 p-2">
+<div class="jukugo-word-kanji text-xl font-bold text-blue-700">${kanjiText}</div>
+<div class="jukugo-word-reading text-sm text-gray-600">${readingText}</div>
+<div class="jukugo-word-meaning text-xs mt-1">${meaningText}</div>
+</div>
+`;
     }
 
     content.innerHTML = html;
-    panel.style.display = 'block';
+    // Panel display is already block, no need to set again here.
   });
 }
 
@@ -142,6 +171,14 @@ export function showJukugoWords(reading, clickedKanji) {
  * Hide jukugo panel
  */
 export function hideJukugoPanel() {
-  const panel = document.getElementById(DOM_IDS.jukugoPanel);
-  panel.style.display = 'none';
+  const kanjiInfoPanel = document.getElementById(DOM_IDS.kanjiInfoPanel);
+  const jukugoPanel = document.getElementById(DOM_IDS.jukugoPanel);
+
+  jukugoPanel.style.display = 'none';
+  
+  // Check if the other panel (Kanji Info) is also hidden. If both are hidden,
+  // the main container can be hidden to trigger the slide-down animation.
+  if (panelsContainer && kanjiInfoPanel.style.display === 'none') {
+      panelsContainer.classList.remove('active');
+  }
 }
