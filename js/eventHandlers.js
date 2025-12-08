@@ -15,6 +15,13 @@ import {
     clearError,
     setButtonEnabled
 } from './uiControls.js';
+import {
+    switchStep,
+    updateStepVisibility,
+    isStep1Valid,
+    isStep2Valid,
+    currentStep
+} from './stepProgress.js';
 import { renderKanjiGrid, renderStats, showStatsSection, showSearchSection } from './kanjiGrid.js';
 import { showKanjiInfo, hideKanjiInfo, hideJukugoPanel } from './kanjiInfo.js';
 import { filterGrid, handleCheckboxChange } from './search.js';
@@ -32,6 +39,7 @@ export function setupEventListeners() {
     setupSearchListeners();
     setupProgressIndexListeners();
     setupMobilePanelListeners();
+    setupProgressStepListeners();
 
     // Listener for Custom Kanji Textarea (needs to be checked on input)
     document.getElementById(DOM_IDS.customKanji)?.addEventListener('input', checkCanVisualize);
@@ -343,7 +351,7 @@ function setupMobilePanelListeners() {
         const deltaY = y - startY;
 
         if (deltaY > 100) {
-            hidePanels(); 
+            hidePanels();
         } else {
             panelsContainer.style.transform = 'translateY(0)';
             setTimeout(() => {
@@ -370,7 +378,74 @@ function setupMobilePanelListeners() {
     });
 }
 
+function setupProgressStepListeners() {
+    // Attach switchStep to progress bar clicks
+    document.querySelectorAll('.progress-step').forEach((stepEl, index) => {
+        stepEl.addEventListener('click', () => {
+            switchStep(index);
+        });
+    });
 
+    // Listener for Input Method (Step 1 -> Step 2 Auto-Advance)
+    document.getElementById('inputMethod').addEventListener('change', function () {
+        updateStepVisibility();
+        if (isStep1Valid()) {
+            switchStep(1);
+        } else if (currentStep === 1) {
+            switchStep(1); // Update visible content if step 1 is active
+        }
+    });
+
+    // Listener for Source System (Part of Step 2 - Index Mode, triggers Step 3 Auto-Advance)
+    document.getElementById('sourceSystem').addEventListener('change', function () {
+        updateStepVisibility();
+        if (isStep2Valid() && currentStep === 1) {
+            switchStep(2);
+        }
+    });
+
+    // Listener for Progress Index (Part of Step 2 - Index Mode, triggers Step 3 Auto-Advance)
+    document.getElementById('progressIndex').addEventListener('input', function () {
+        updateStepVisibility();
+        if (isStep2Valid() && currentStep === 1) {
+            switchStep(2);
+        }
+    });
+
+    // Listener for Custom Kanji (Completes Step 2 - Custom Mode, triggers Step 3 Auto-Advance)
+    document.getElementById('customKanji').addEventListener('input', function () {
+        updateStepVisibility();
+        if (isStep2Valid() && currentStep === 1) {
+            switchStep(2);
+        }
+    });
+
+    // 1. Listener for Source Levels (Part of Step 2 - Index Mode, triggers Step 3 Auto-Advance)
+    document.getElementById('sourceLevelMenu').addEventListener('change', function (event) {
+        if (event.target.type === 'checkbox') {
+            updateStepVisibility();
+            if (isStep2Valid() && currentStep === 1) {
+                switchStep(2);
+            }
+        }
+    });
+
+    // 2. Listener for Comparison System (Part of Step 3)
+    document.getElementById('comparisonSystem').addEventListener('change', function () {
+        updateStepVisibility();
+    });
+
+    // 3. Listener for Comparison Levels (Completes Step 3)
+    document.getElementById('comparisonLevelMenu').addEventListener('change', function (event) {
+        if (event.target.type === 'checkbox') {
+            updateStepVisibility();
+        }
+    });
+
+    // Initial Setup Calls:
+    updateStepVisibility();
+    switchStep(0);
+}
 
 /**
  * Make handleCheckboxChange available globally for HTML onclick handlers

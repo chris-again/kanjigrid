@@ -211,7 +211,7 @@ export function toggleViewMode() {
     } else {
         // Switch to Grid View
         controls.style.display = 'none';
-        btn.textContent = 'REGENERATE';
+        btn.textContent = 'OPTIONS';
         return false; // Indicates switch to grid
     }
 }
@@ -246,6 +246,23 @@ export function clearError() {
     if (errorSection) {
         errorSection.innerHTML = '';
         errorSection.style.display = 'none';
+    }
+}
+
+/**
+ * Force the view to display the Options panel.
+ */
+export function showOptionsView() {
+    const controls = document.getElementById(DOM_IDS.controlsPanel);
+    const searchSection = document.getElementById(DOM_IDS.searchSection);
+    const btn = document.getElementById(DOM_IDS.visualizeBtn);
+    if (!controls || !searchSection || !btn) return;
+
+    // Check if we are currently in grid view (controls are hidden)
+    if (controls.style.display === 'none') {
+        controls.style.display = 'block';
+        searchSection.style.display = 'none';
+        btn.textContent = 'SHOW GRID - グリッドを表示';
     }
 }
 
