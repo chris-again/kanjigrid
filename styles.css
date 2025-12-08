@@ -63,6 +63,7 @@ body {
     color: var(--text-primary);
     min-height: 100vh;
     padding: 10px;
+    overscroll-behavior: auto;
 }
 
 
