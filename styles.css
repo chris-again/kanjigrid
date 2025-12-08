@@ -434,6 +434,20 @@ h1 {
 }
 
 
+/* Style for completed steps */
+.progress-step.complete .progress-circle {
+    transform: scale(1);
+    /* Remove the spinning animation on complete */
+    box-shadow: 
+        0 4px 8px var(--shadow-subtle),
+        inset 0 0 0 12px var(--gold-accent); 
+}
+
+.progress-step.active.complete .progress-circle {
+    /* Reapply active/current step styles */
+    transform: scale(1.05);
+}
+
 /* Controls Panel */
 .controls {
     padding: 10px 24px;
