@@ -38,7 +38,7 @@
                 <div class="progress-fill" id="progressFill" style="width: 0%"></div>
                 <div class="progress-step" onclick="switchStep(0)">
                     <div class="progress-circle">1</div>
-                    <div class="step-description">Input Method</div>
+                    <div class="step-description">Source</div>
                 </div>
                 <div class="progress-step" onclick="switchStep(1)">
                     <div class="progress-circle">2</div>
@@ -225,11 +225,15 @@
         <div id="kanjiGrid" class="kanji-grid"></div>
     </div>
 
-    <div class="panels-container">
+    <div class="panels-container" id="panelsContainer">
+        <div class="panel-header" id="panelHeader">
+            <div class="drag-handle"></div>
+            <button class="close-btn" id="panelCloseBtn">&times;</button>
+        </div>
+
         <div id="kanjiInfoPanel" class="kanji-info-panel">
             <div id="kanjiInfoContent"></div>
         </div>
-
         <div id="jukugoPanel" class="jukugo-panel">
             <h3>Words Found</h3>
             <div id="jukugoPanelContent"></div>
