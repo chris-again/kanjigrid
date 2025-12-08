@@ -54,9 +54,8 @@
         <div class="controls" id="controlsPanel">
             <!-- Step 1: Input Method -->
             <div class="control-group active" id="step0">
-                <div class="control-group-title">Choose Input Method</div>
-                <div class="control-group-description">Choose between a predefined list of kanji or a personal custom
-                    list.</div>
+                <div class="control-group-title">What kanji do you know?</div>
+                <div class="control-group-description">You can choose from either a standardised list or your own.</div>
 
                 <div class="form-group">
                     <label>Input Method</label>
@@ -69,18 +68,15 @@
 
                 <div class="info-box">
                     <div class="info-box-text">
-                        <p>Tip: the following predefined kanji lists are available for you to choose from:</p>
+                        <p>Available predefined lists:</p>
                         <ul>
                             <li>Japanese School Grades</li>
-                            <li>JLPT levels</li>
+                            <li>JLPT levels or the revised version</li>
                             <li>Kanji Learner's Course</li>
                             <li>Jouyou (2020 revision)</li>
-                            <li>JLPT levels (revised)</li>
                             <li>Frequency in media</li>
-                            <li>Kanji Kentei</li>
-                            <li>Kanji Kentei (2020 revision)</li>
-                            <li>Remembering the Kanji - 1st Edition</li>
-                            <li>Remembering the Kanji - 6th Edition</li>
+                            <li>Kanji Kentei or the 2020 revised version</li>
+                            <li>Remembering the Kanji - 1st Edition or 6th Edition</li>
                             <li>Kanji in Context</li>
                             <li>Hadamitzky/Spahn book</li>
                         </ul>
@@ -91,7 +87,7 @@
             <!-- Step 2a: Predefined List -->
             <div class="control-group" id="step1" data-mode="index">
                 <div class="control-group-title">Your Kanji Source</div>
-                <div class="control-group-description">Select your learning system and the levels you've completed.
+                <div class="control-group-description">Choose the list from which you have studied or are studying kanji, and the levels you have completed. If you wish, you can then enter the number of kanji you know.
                 </div>
 
                 <div id="indexInput">
@@ -129,6 +125,11 @@
                             </div>
                         </div>
                     </div>
+                    <div class="info-box">
+                        <div class="info-box-text">
+                            Leave empty to include all kanji from your selected levels. Or enter a number to specify exactly how many kanji you know (e.g., entering "500" means you know the first 500 kanji from the list).
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -148,7 +149,7 @@
 
                     <div class="info-box">
                         <div class="info-box-text">
-                            Tip: you can paste any text. Only kanji will be extracted!
+                            Tip: You can paste entire sentences, paragraphs, or vocabulary lists. Only kanji will be extracted and counted!
                         </div>
                     </div>
                 </div>
@@ -157,7 +158,7 @@
             <!-- Step 3: Comparison -->
             <div class="control-group" id="step2">
                 <div class="control-group-title">Comparison Target</div>
-                <div class="control-group-description">Choose which system you want to compare your knowledge against.
+                <div class="control-group-description">Select a target learning list and the levels you want to compare. The grid will show you which kanji you already know, which ones you still need to learn, and any extra kanji you've learned that aren't in the target list.
                 </div>
 
                 <div class="form-group">
