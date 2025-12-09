@@ -59,7 +59,7 @@
 
                 <div class="form-group">
                     <label>Input Method</label>
-                    <select id="inputMethod" autocomplete="off">
+                    <select id="inputMethod" autocomplete="off" required>
                         <option value="" disabled selected>Select...</option>
                         <option value="index">Predefined Kanji List</option>
                         <option value="custom">Custom Kanji List</option>
@@ -79,6 +79,7 @@
                             <li>Remembering the Kanji - 1st Edition or 6th Edition</li>
                             <li>Kanji in Context</li>
                             <li>Hadamitzky/Spahn book</li>
+                            <li>Wanikani</li>
                         </ul>
                     </div>
                 </div>
@@ -93,12 +94,12 @@
                 <div id="indexInput">
                     <div class="form-group">
                         <label for="sourceSystem">Learning System</label>
-                        <select id="sourceSystem" autocomplete="off">
-                            <option value="" disabled selected>SELECT SEQUENCE...</option>
-                            <option value="kanji_kentei_2020">KANJI KENTEI (2020)</option>
+                        <select id="sourceSystem" autocomplete="off" required>
+                            <option value="" disabled selected>Select list...</option>
+                            <!-- <option value="kanji_kentei_2020">KANJI KENTEI (2020)</option>
                             <option value="japanese_school_grades">JAPANESE SCHOOL GRADES</option>
                             <option value="jlpt_levels">JLPT LEVELS</option>
-                            <option value="kanji_learners_course">KANJI LEARNER'S COURSE</option>
+                            <option value="kanji_learners_course">KANJI LEARNER'S COURSE</option> -->
                         </select>
                     </div>
 
@@ -106,7 +107,7 @@
                         <label for="sourceLevelToggle">Levels Completed</label>
                         <div class="dropdown-checkbox">
                             <div class="dropdown-toggle" id="sourceLevelToggle">
-                                <span id="sourceLevelText">select levels...</span>
+                                <span id="sourceLevelText">Select levels...</span>
                             </div>
                             <div class="dropdown-menu" id="sourceLevelMenu"></div>
                         </div>
@@ -144,7 +145,7 @@
                             Paste here!
                             <span class="label-hint">I know these kanji:</span>
                         </label>
-                        <textarea id="customKanji" placeholder="一二三四五六七八九十日月火水木金土..." autocomplete="off"></textarea>
+                        <textarea id="customKanji" placeholder="一二三四五六七八九十日月火水木金土..." autocomplete="off" required></textarea>
                     </div>
 
                     <div class="info-box">
@@ -163,12 +164,12 @@
 
                 <div class="form-group">
                     <label for="comparisonSystem">Target System</label>
-                    <select id="comparisonSystem" autocomplete="off">
-                        <option value="" disabled selected>SELECT SEQUENCE...</option>
-                        <option value="kanji_kentei_2020">KANJI KENTEI (2020)</option>
+                    <select id="comparisonSystem" autocomplete="off" required>
+                        <option value="" disabled selected>Select list...</option>
+                        <!-- <option value="kanji_kentei_2020">KANJI KENTEI (2020)</option>
                         <option value="japanese_school_grades">JAPANESE SCHOOL GRADES</option>
                         <option value="jlpt_levels">JLPT LEVELS</option>
-                        <option value="kanji_learners_course">KANJI LEARNER'S COURSE</option>
+                        <option value="kanji_learners_course">KANJI LEARNER'S COURSE</option> -->
                     </select>
                 </div>
 
@@ -176,7 +177,7 @@
                     <label for="comparisonLevelToggle">Target Levels</label>
                     <div class="dropdown-checkbox">
                         <div class="dropdown-toggle" id="comparisonLevelToggle">
-                            <span id="comparisonLevelText">select levels...</span>
+                            <span id="comparisonLevelText">Select levels...</span>
                         </div>
                         <div class="dropdown-menu" id="comparisonLevelMenu"></div>
                     </div>
@@ -219,6 +220,7 @@
 
 
         <div id="statsSection" style="display:none;">
+            <div class="stats-header"></div>
             <div class="stats" id="stats"></div>
         </div>
 

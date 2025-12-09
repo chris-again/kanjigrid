@@ -282,10 +282,10 @@ h1 {
 .progress-bar::before {
     content: '';
     position: absolute;
-    top: 20px;
+    top: 13px;
     left: 0;
     right: 0;
-    height: 8px;
+    height: 6px;
     background-color: #e0d6c2;
     border-radius: 4px;
     z-index: 0;
@@ -296,10 +296,10 @@ h1 {
 
 .progress-fill {
     position: absolute;
-    top: 20px;
+    top: 13px;
     left: 0;
     right: 0;
-    height: 8px;
+    height: 6px;
     background: linear-gradient(90deg, var(--bamboo-green), #5a7c66);
     border-radius: 4px;
     transition: width 0.5s ease;
@@ -341,8 +341,8 @@ h1 {
 }
 
 .progress-circle {
-    width: 48px;
-    height: 48px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     background: var(--paper-cream);
     border: 3px solid var(--border-ink);
@@ -362,8 +362,8 @@ h1 {
 .progress-circle:before {
     content: "";
     position: absolute;
-    width: 54px;
-    height: 54px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     border: 1px solid rgba(44, 24, 16, 0.1);
     transition: all 0.3s;
@@ -372,8 +372,8 @@ h1 {
 .progress-circle:after {
     content: "";
     position: absolute;
-    width: 72px;
-    height: 72px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
     border: 1px solid rgba(201, 169, 110, 0);
     transition: all 0.4s;
@@ -394,19 +394,19 @@ h1 {
     transform: scale(1.05);
     box-shadow:
         0 6px 12px rgba(74, 107, 87, 0.3),
-        inset 0 0 0 12px var(--gold-accent);
+        inset 0 0 0 6px var(--gold-accent);
 }
 
-.progress-step.active .progress-circle:before {
+/* .progress-step.active .progress-circle:before {
     border: 2px solid var(--border-ink);
-    width: 36px;
-    height: 36px;
-}
+    width: 24px;
+    height: 24px;
+}*/
 
 .progress-step.active .progress-circle:after {
     border: 2px dashed var(--gold-accent);
-    width: 64px;
-    height: 64px;
+    width: 48px;
+    height: 48px;
     animation: rotateMon 20s linear infinite;
 }
 
@@ -428,7 +428,6 @@ h1 {
     opacity: 0.8;
     text-align: center;
     max-width: 140px;
-    margin-top: 4px;
     line-height: 1.4;
     font-style: italic;
 }
@@ -438,9 +437,9 @@ h1 {
 .progress-step.complete .progress-circle {
     transform: scale(1);
     /* Remove the spinning animation on complete */
-    box-shadow: 
+    box-shadow:
         0 4px 8px var(--shadow-subtle),
-        inset 0 0 0 12px var(--gold-accent); 
+        inset 0 0 0 16px var(--gold-accent);
 }
 
 .progress-step.active.complete .progress-circle {
@@ -962,10 +961,19 @@ textarea {
     background-color: var(--bg-primary);
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-    gap: 12px;
+    gap: 5px;
     margin-bottom: 10px;
     border: 3px solid var(--border-primary);
     position: relative;
+    font-size: 0.9rem;
+}
+
+.stats-header {
+    margin: 15px 0;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    letter-spacing: 1px;
+    text-align: left;
 }
 
 .stats::before {
@@ -1083,20 +1091,20 @@ textarea {
    INFO PANELS (Kanji Info & Jukugo Panels)
    ============================================================================ */
 
-   .kanji-info-panel,
-   .jukugo-panel {
-       position: static;
-       display: block;
-       background: transparent;
-       box-shadow: none;
-       width: 100%;
-       max-width: 100%;
-       padding: 0 25px 25px 25px;
-       overflow-y: auto;
-       overscroll-behavior: contain;
-       scrollbar-width: thin;
-       scrollbar-color: rgba(255,255,255,0.3) transparent;
-   }
+.kanji-info-panel,
+.jukugo-panel {
+    position: static;
+    display: block;
+    background: transparent;
+    box-shadow: none;
+    width: 100%;
+    max-width: 100%;
+    padding: 0 25px 25px 25px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
 
 /* Kanji Info Panel Specific Styles */
 .kanji-info-panel h2 {
@@ -1325,11 +1333,7 @@ textarea {
     }
 
     .kanji {
-        font-size: 0.5em;
+        font-size: 0.8em;
         border: 1px solid var(--border-primary);
-    }
-
-    .stats {
-        grid-template-columns: 1fr;
     }
 }
