@@ -1,34 +1,40 @@
 // js/uiControls.js - Handles UI control interactions
 
 import { DOM_IDS, CSS_CLASSES, INPUT_METHODS } from './config.js';
-import { getSystems } from './dataLoader.js';
+import { getSystems, getCategoryMapping } from './dataLoader.js';
 
 /**
  * Sets up initial system dropdowns and attaches listeners for system changes.
  */
 export function initializeSystemControls() {
     const systems = getSystems();
-    const systemNames = Object.keys(systems);
+    const systemKeys  = Object.keys(systems).sort();
+    const categoryMapping = getCategoryMapping();
 
     const sourceSystemEl = document.getElementById(DOM_IDS.sourceSystem);
     const comparisonSystemEl = document.getElementById(DOM_IDS.comparisonSystem);
 
-    if (!sourceSystemEl || !comparisonSystemEl || systemNames.length === 0) return;
+    if (!sourceSystemEl || !comparisonSystemEl || systemKeys.length === 0) return;
 
-    // 1. Populate System Dropdowns
+    // 1. Create a map from internal key to display name using categoryMapping
+    const internalToDisplay = {};
+    for (const [displayName, internalKey] of Object.entries(categoryMapping)) {
+        internalToDisplay[internalKey] = displayName;
+    }
+
+    // 2. Populate System Dropdowns
     const optionsHtml =
-        `<option value="" disabled selected>Select system...</option>` +
-        systemNames.map(name =>
-            `<option value="${name}">${name.replace(/_/g, ' ')}</option>`
-        ).join('');
-
+        `<option value="" disabled selected>Select list...</option>` +
+        systemKeys.map(key => {
+            const displayName = internalToDisplay[key] || key; // fallback to internal key
+            return `<option value="${key}">${displayName}</option>`;
+        }).join('');
 
     sourceSystemEl.innerHTML = optionsHtml;
     comparisonSystemEl.innerHTML = optionsHtml;
 
-    // 2. Attach Change Listeners to handle dynamic level menu updates
+    // 3. Attach Change Listeners to handle dynamic level menu updates
 
-    // Source System Listener
     sourceSystemEl.addEventListener('change', (e) => {
         updateCheckboxMenu(
             e.target.value,
@@ -37,7 +43,6 @@ export function initializeSystemControls() {
         );
     });
 
-    // Comparison System Listener
     comparisonSystemEl.addEventListener('change', (e) => {
         updateCheckboxMenu(
             e.target.value,
@@ -46,7 +51,7 @@ export function initializeSystemControls() {
         );
     });
 
-    // 3. Initialize the level menus with the currently selected systems
+    // 4. Initialize the level menus with the currently selected systems
     updateCheckboxMenu(
         sourceSystemEl.value,
         DOM_IDS.sourceLevelMenu,
@@ -103,13 +108,32 @@ export function updateCheckboxMenu(systemName, menuId, textId) {
         document.dispatchEvent(new CustomEvent('checkbox_state_change'));
     });
 
+    // Track last checked checkbox for shift-click selection
+    let lastChecked = null;
+
     // Individual checkbox changes
     levelCheckboxes.forEach(cb => {
+        cb.addEventListener('click', (e) => {
+            // Handle shift-click range selection
+            if (e.shiftKey && lastChecked && lastChecked !== cb) {
+                const checkboxArray = Array.from(levelCheckboxes);
+                const start = checkboxArray.indexOf(lastChecked);
+                const end = checkboxArray.indexOf(cb);
+                const [rangeStart, rangeEnd] = start < end ? [start, end] : [end, start];
+
+                // Set all checkboxes in range to the same state as the clicked one
+                for (let i = rangeStart; i <= rangeEnd; i++) {
+                    checkboxArray[i].checked = cb.checked;
+                }
+            }
+
+            lastChecked = cb;
+        });
+
         cb.addEventListener('change', () => {
             const allChecked = Array.from(levelCheckboxes).every(c => c.checked);
             const noneChecked = Array.from(levelCheckboxes).every(c => !c.checked);
             allCheckbox.checked = allChecked;
-            // The indeterminate property is part of HTMLInputElement, but setting it via JS works fine
             allCheckbox.indeterminate = !allChecked && !noneChecked;
             updateDropdownText(menuId, textId);
 
@@ -117,6 +141,7 @@ export function updateCheckboxMenu(systemName, menuId, textId) {
             document.dispatchEvent(new CustomEvent('checkbox_state_change'));
         });
     });
+
 
     updateDropdownText(menuId, textId);
 }

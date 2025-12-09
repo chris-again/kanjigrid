@@ -1,6 +1,8 @@
 // js/dataLoader.js - Handles all data loading operations
 
 import { KANJI_SYSTEMS } from './config.js';
+import { KANJI_SYSTEM_ABBR } from './config.js';
+import { CATEGORY_MAPPING } from './config.js';
 
 const JMDICT_CDN_URL = "https://jmdict.b-cdn.net/jmdict-eng-3.6.1.json";
 
@@ -34,6 +36,15 @@ if (window.Worker) {
 export function getSystems() {
     return KANJI_SYSTEMS;
 }
+
+export function getSystemAbbr(systemKey) {
+    return KANJI_SYSTEM_ABBR[systemKey] || systemKey;
+}
+
+export function getCategoryMapping() {
+    return CATEGORY_MAPPING;
+}
+
 
 export function getJMDictData() {
     console.warn("getJMDictData() is obsolete. The JMDict data is now processed in a Web Worker.");

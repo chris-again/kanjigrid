@@ -4,6 +4,7 @@ import { DOM_IDS, KANJI_TYPES } from './config.js';
 import { buildKanjiSearchKeywords } from './dataProcessor.js';
 import { showKanjiInfo, showJukugoWords, hideJukugoPanel } from './kanjiInfo.js';
 import { jukugoState } from './state.js';
+import { getSystemAbbr } from './dataLoader.js';
 
 
 // State to hold the full data in memory
@@ -21,7 +22,7 @@ function handleKanjiClick(event) {
   // 2. JUKUGO LOGIC: Check if this kanji was highlighted by the last Jukugo search
   if (jukugoState.lastReading && jukugoState.matchingKanji.has(kanji)) {
     // If it was, show the Jukugo panel for that reading, and PASS THE CLICKED KANJI
-    showJukugoWords(jukugoState.lastReading, kanji); // <-- CHANGE HERE
+    showJukugoWords(jukugoState.lastReading, kanji); // 
   } else {
     // Otherwise, hide the Jukugo panel
     hideJukugoPanel();
@@ -125,18 +126,28 @@ export function renderStats(results) {
   const comparisonSystemEl = document.getElementById(DOM_IDS.comparisonSystem);
   const comparisonSystemName = comparisonSystemEl ? comparisonSystemEl.options[comparisonSystemEl.selectedIndex].text : '';
 
+  const systemKey = systemEl.value;
+  const comparisonKey = comparisonSystemEl.value;
+  
+  const systemAbbr = getSystemAbbr(systemKey);
+  const comparisonAbbr = getSystemAbbr(comparisonKey);
+  
+  document.getElementById('statsSection').querySelector('.stats-header').innerHTML  =
+      `${systemAbbr} vs ${comparisonAbbr}`;
+  
+
   statsEl.innerHTML = `
         <div class="stat-card coverage">
           <span class="stat-number">${results.learned.length}</span>
-          <span class="stat-label">You know ${progress}% of <b>${comparisonSystemName}</b> selected levels</span>
+          <span class="stat-label">You know ${progress}% of ${comparisonAbbr}</span>
         </div>
         <div class="stat-card missing">
           <span class="stat-number">${results.unlearned.length}</span>
-          <span class="stat-label">Remaining from <b>${comparisonSystemName}</b> selected levels</span>
+          <span class="stat-label">To learn from ${comparisonAbbr}</span>
         </div>
         <div class="stat-card extra">
         <span class="stat-number">${results.userOnly.length}</span>
-        <span class="stat-label">kanji you KNOW outside <b>${comparisonSystemName}</b> selected levels</span>
+        <span class="stat-label">Extra from ${systemAbbr}</span>
         </div>`;
 }
 
