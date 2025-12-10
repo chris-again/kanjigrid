@@ -37,6 +37,8 @@
     --gold-accent: #c9a96e;
     --border-ink: #2c1810;
     --shadow-subtle: rgba(44, 24, 16, 0.1);
+    --sourceList: #7e735f;
+    --targetList: #5f6a7e;
 }
 
 
@@ -447,6 +449,35 @@ h1 {
     transform: scale(1.05);
 }
 
+.progress-step .step-description .system-detail {
+    display: block;
+    font-size: 0.7em;
+    font-weight: normal;
+    line-height: 1;
+    max-width: 100px;
+    overflow: hidden;
+    white-space: normal;
+    text-overflow: clip;
+    word-wrap: break-word;
+}
+
+.progress-step .source-detail {
+    color: white;
+    background-color: var(--sourceList);
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    padding: 3px;
+}
+
+.progress-step .comparison-detail {
+    color: white;
+    background-color: var(--targetList);
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    padding: 3px;
+}
+
+
 /* Controls Panel */
 .controls {
     padding: 10px 24px;
@@ -485,6 +516,10 @@ h1 {
     color: var(--text-secondary);
     margin-bottom: 24px;
     line-height: 1.6;
+}
+
+.control-group-description b {
+    color: var(--gold-accent);
 }
 
 .form-group {
@@ -869,7 +904,8 @@ textarea {
     border-radius: 100px;
     position: relative;
     cursor: pointer;
-    transition: .3s ease;
+    transition: .15s ease;
+    will-change: background-color;
 }
 
 #checkbox-group input[type=checkbox]:checked+label {
@@ -877,11 +913,11 @@ textarea {
 }
 
 #checkbox-group input[type=checkbox]:checked+label:before {
-    left: 25px;
+    transform: translateX(23px);
 }
 
 #checkbox-group label:before {
-    transition: .3s ease;
+    transition: transform .15s ease;
     content: '';
     width: 18px;
     height: 18px;
@@ -893,6 +929,7 @@ textarea {
     border: 2px solid;
     color: black;
     border-radius: 100px;
+    will-change: transform;
 }
 
 /* ============================================================================
@@ -957,6 +994,7 @@ textarea {
    ============================================================================ */
 
 .stats {
+    position: relative;
     padding: 10px;
     background-color: var(--bg-primary);
     display: grid;
@@ -993,14 +1031,43 @@ textarea {
     text-indent: 10px;
 }
 
+.stats-panel {
+    padding: 5px;
+    border: 2px solid #fafafa;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.user-source {
+    background-color: var(--sourceList);
+    border-color: var(--sourceList);
+}
+
+h4.panel-title {
+    text-align: center;
+}
+
+.panel-title b{
+    color: var(--bg-primary);
+}
+
+.comparison-target {
+    background-color: var(--targetList);
+    border-color: var(--targetList);
+}
+
 .stat-card {
     padding: 7px;
     text-align: center;
-    border: 2px solid;
     background-color: var(--bg-primary);
     display: flex;
     flex-direction: column;
     justify-content: center;
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
 }
 
 .stat-card.coverage {
@@ -1039,12 +1106,6 @@ textarea {
     padding: 0.2em 0;
 }
 
-.stat-label b {
-    font-weight: normal;
-    color: var(--text-primary);
-}
-
-
 /* ============================================================================
    KANJI GRID
    ============================================================================ */
@@ -1056,6 +1117,7 @@ textarea {
     overflow-y: auto;
     background-color: var(--bg-secondary);
     border: 3px solid var(--border-primary);
+    gap: 2px;
 }
 
 .kanji {
@@ -1067,23 +1129,37 @@ textarea {
     transition: transform 0.1s;
     font-family: "Noto Sans JP", sans-serif;
     font-size: 1.2rem;
+
+    /* DEFAULT STATE (Neutral) */
+    background-color: transparent;
+    border-radius: 4px;
+    border: 1px solid transparent;
 }
 
 .kanji.learned {
     color: var(--coverage);
+    background-color: color-mix(in srgb, var(--coverage), transparent 85%);
+    border-color: color-mix(in srgb, var(--coverage), transparent 70%);
 }
 
 .kanji.unlearned {
     color: var(--missing);
+    background-color: color-mix(in srgb, var(--missing), transparent 90%);
+    border: 1px dashed var(--missing);
 }
 
 .kanji.user-only {
     color: var(--extra);
+    background-color: color-mix(in srgb, var(--coverage), transparent 85%);
+    border-color: color-mix(in srgb, var(--coverage), transparent 70%);
 }
 
 .kanji:hover {
     transform: scale(1.8);
     z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    background-color: var(--bg-secondary);
+    border-color: currentColor;
 }
 
 
