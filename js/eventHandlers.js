@@ -2,7 +2,7 @@
 
 import { DOM_IDS } from './config.js';
 import { loadMultipleLists } from './dataLoader.js';
-import { getUserKanjiSet, compareKanjiLists,getSourceKanjiTotal } from './dataProcessor.js';
+import { getUserKanjiSet, compareKanjiLists, getSourceKanjiTotal } from './dataProcessor.js';
 import {
     updateCheckboxMenu,
     toggleDropdown,
@@ -40,6 +40,7 @@ export function setupEventListeners() {
     setupProgressIndexListeners();
     setupMobilePanelListeners();
     setupProgressStepListeners();
+    setupHeaderClickListener();
 
     // Listener for Custom Kanji Textarea (needs to be checked on input)
     document.getElementById(DOM_IDS.customKanji)?.addEventListener('input', checkCanVisualize);
@@ -434,6 +435,40 @@ function setupProgressStepListeners() {
     // Initial Setup Calls:
     updateStepVisibility();
     switchStep(0);
+}
+
+
+/**
+ * Setup listener for the header to toggle fullscreen/wallpaper mode.
+ */
+function setupHeaderClickListener() {
+    const headerH1 = document.querySelector('header h1');
+    const container = document.querySelector('.container');
+
+    // A simple check: assume the grid is "visible" if the controlsPanel is hidden (view mode toggle)
+    const isGridVisible = () => {
+        // You'll need to confirm the DOM_IDS import for this to work correctly
+        // Assuming DOM_IDS.controlsPanel is the ID for the controls div
+        const controlsPanel = document.getElementById('controlsPanel');
+        const kanjiGrid = document.getElementById('kanjiGrid');
+        
+        // Grid is visible if controls are hidden AND the grid has content
+        return controlsPanel && controlsPanel.style.display === 'none' && kanjiGrid.children.length > 0;
+    };
+
+    headerH1.addEventListener('click', () => {
+        // Only allow toggling if a grid has actually been rendered
+        if (!isGridVisible()) {
+            return; 
+        }
+
+        document.body.classList.toggle('fullscreen-body');
+
+        // Toggle the fullscreen class on the main container
+        container.classList.toggle('fullscreen-mode');
+        
+        // We will rely on CSS to handle the visibility changes
+    });
 }
 
 /**
