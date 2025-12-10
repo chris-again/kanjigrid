@@ -23,21 +23,32 @@ export function updateStepDescriptionText(stepIndex, isComplete) {
     let baseText;
     let detailText = '';
     let detailClass = '';
-
+    const inputMethod = document.getElementById('inputMethod')?.value;
     // Determine base text and dynamic detail
     if (stepIndex === 0) {
         // STEP 1: Input Method / Source List
-        const inputMethod = document.getElementById('inputMethod')?.value;
         if (inputMethod === 'custom') {
-            baseText = "Your List";
+            baseText = "Input";
+            detailText = "Custom";
+            detailClass = 'input-detail';
+        } else if (inputMethod === 'index') {
+            baseText = "Input";
+            detailText = "Predefined";
+            detailClass = 'input-detail';
         } else {
-            baseText = "Source";
-            detailText = getSelectedSystemName(DOM_IDS.sourceSystem);
-            detailClass = 'source-detail';
+            baseText = "Input";
         }
     } else if (stepIndex === 1) {
         // STEP 2: Progress Index (Stays constant)
-        baseText = "Order";
+        if (inputMethod === 'index') {
+            baseText = "Source";
+            detailText = getSelectedSystemName(DOM_IDS.sourceSystem);
+            detailClass = 'source-detail';
+        } else {
+            baseText = "Source";
+            detailText = "My List";
+            detailClass = 'source-detail';
+        }
     } else if (stepIndex === 2) {
         // STEP 3: Comparison List
         baseText = "Compare With";

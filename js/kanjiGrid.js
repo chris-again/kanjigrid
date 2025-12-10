@@ -113,28 +113,42 @@ export function getMasterKanjiList() {
   return masterKanjiList;
 }
 
-export function renderStats(results,sourceTotalKanji) {
+
+// Function to get the current input method (assuming this is where it's defined/available)
+function getCurrentInputMethod() {
+    const inputMethodEl = document.getElementById(DOM_IDS.inputMethod);
+    return inputMethodEl ? inputMethodEl.value : 'index'; // Default to 'index' if not found
+}
+
+export function renderStats(results, sourceTotalKanji) {
   const statsEl = document.getElementById(DOM_IDS.stats);
   const total = results.learned.length + results.unlearned.length;
   const totalStudied = results.learned.length + results.userOnly.length;
   const progress = total > 0 ? Math.round((results.learned.length / total) * 100) : 0;
 
-  console.log(total,totalStudied,progress);
+  const currentInputMethod = getCurrentInputMethod();
 
+  let systemName;
+  let systemKey;
 
-  const learnedPercentOfSource = sourceTotalKanji> 0 
-        ? Math.round((totalStudied / sourceTotalKanji) * 100) 
-        : 0;
+  if (currentInputMethod === 'custom') {
+    // If 'custom' is selected, hardcode the name
+    systemName = 'My List';
+    systemKey = 'custom'; // Use a special key for custom mode
+  } else {
+    // Otherwise (for 'index' or predefined), use the dropdown
+    const systemEl = document.getElementById(DOM_IDS.sourceSystem);
+    systemName = systemEl ? systemEl.options[systemEl.selectedIndex].text : '';
+    systemKey = systemEl ? systemEl.value : '';
+  }
 
-  // Get the current system name from the source system dropdown
-  const systemEl = document.getElementById(DOM_IDS.sourceSystem);
-  const systemName = systemEl ? systemEl.options[systemEl.selectedIndex].text : '';
+  const learnedPercentOfSource = sourceTotalKanji > 0
+    ? Math.round((totalStudied / sourceTotalKanji) * 100)
+    : 0;
 
   // Get the currect system name from the comparison system dropdown
   const comparisonSystemEl = document.getElementById(DOM_IDS.comparisonSystem);
   const comparisonSystemName = comparisonSystemEl ? comparisonSystemEl.options[comparisonSystemEl.selectedIndex].text : '';
-
-  const systemKey = systemEl.value;
   const comparisonKey = comparisonSystemEl.value;
 
   const systemAbbr = getSystemAbbr(systemKey);
