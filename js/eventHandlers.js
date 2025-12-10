@@ -2,7 +2,7 @@
 
 import { DOM_IDS } from './config.js';
 import { loadMultipleLists } from './dataLoader.js';
-import { getUserKanjiSet, compareKanjiLists } from './dataProcessor.js';
+import { getUserKanjiSet, compareKanjiLists,getSourceKanjiTotal } from './dataProcessor.js';
 import {
     updateCheckboxMenu,
     toggleDropdown,
@@ -128,12 +128,13 @@ function setupVisualizeButtonListener() {
 
             const comparisonArray = await loadMultipleLists(comparisonSystem, comparisonFiles);
             const userArray = await getUserKanjiSet();
+            const sourceTotalKanji = await getSourceKanjiTotal();
 
             const results = compareKanjiLists(userArray, comparisonArray);
 
             showStatsSection();
             showSearchSection();
-            renderStats(results);
+            renderStats(results, sourceTotalKanji);
             renderKanjiGrid(userArray, comparisonArray);
 
         } catch (error) {

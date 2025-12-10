@@ -88,7 +88,7 @@ export async function loadMultipleLists(systemName, fileNames) {
 }
 
 export function loadJMDict() {
-    if (worker) {
+    if (worker && ENABLE_JUKUGO_SEARCH) {
         worker.postMessage({
             type: 'LOAD_JMDICT',
             payload: { url: JMDICT_CDN_URL }
@@ -97,7 +97,7 @@ export function loadJMDict() {
 }
 
 export function searchJukugoInWorker(query, callback) {
-    if (worker && jmdictLoaded) {
+    if (ENABLE_JUKUGO_SEARCH && worker && jmdictLoaded) {
         onJukugoResults = callback;
         worker.postMessage({
             type: 'SEARCH_JUKUGO',

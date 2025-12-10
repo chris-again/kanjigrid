@@ -84,8 +84,10 @@ export function handleCheckboxChange(type) {
         input.placeholder = "Type meaning or reading...";
     }
 
-    // Re-run filter immediately in case the text changed format 
-    filterGrid();
+    // Only filter if there's actual text to search
+    if (input.value.trim()) {
+        filterGrid();
+    }
 }
 
 /**

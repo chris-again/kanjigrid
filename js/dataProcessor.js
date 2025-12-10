@@ -118,3 +118,39 @@ export function buildKanjiSearchKeywords(kanji) {
 
     return `${kanji} ${meanings} ${on} ${kun}`;
 }
+
+/**
+ * Calculates the absolute total number of kanji in the selected Source Levels.
+ * 
+ */
+export async function getSourceKanjiTotal() {
+    const methodEl = document.getElementById(DOM_IDS.inputMethod);
+    const method = methodEl ? methodEl.value : INPUT_METHODS.INDEX;
+    
+    if (method === INPUT_METHODS.CUSTOM) {
+        const customText = document.getElementById(DOM_IDS.customKanji).value;
+        const uniqueKanji = new Set();
+        for (const char of customText) {
+            if (/\p{Script=Han}/u.test(char)) {
+                uniqueKanji.add(char);
+            }
+        }
+        return uniqueKanji.size;
+
+    } else {
+        // Index method logic
+        const systemName = document.getElementById(DOM_IDS.sourceSystem).value;
+        const selectedFiles = getSelectedFiles(DOM_IDS.sourceLevelMenu);
+
+        if (selectedFiles.length === 0) {
+             // Handle the case where no levels are selected
+             return 0;
+        }
+
+        // Load the full list from the selected files
+        const sourceArray = await loadMultipleLists(systemName, selectedFiles);
+        
+        // Return the full, unsliced size
+        return sourceArray.length;
+    }
+}

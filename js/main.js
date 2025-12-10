@@ -2,6 +2,7 @@
 import { loadJMDict } from './dataLoader.js';
 import { setupEventListeners } from './eventHandlers.js';
 import { initializeSystemControls } from './uiControls.js';
+import { ENABLE_JUKUGO_SEARCH } from './config.js';
 
 /**
  * Initialize the application
@@ -19,11 +20,16 @@ async function init() {
         // Only run testing defaults on your testing URL
         if (window.location.href.includes('127.0.0.1:1111')) {
             const { setTestingDefaults } = await import('./testing.js');
-            //setTestingDefaults();
+            setTestingDefaults();
         }
 
         // 3. Load JMDict dictionary in the background using the Web Worker for performance
-        loadJMDict();
+        if (ENABLE_JUKUGO_SEARCH) {
+            loadJMDict();
+            console.log('Jukugo search enabled. Loading JMDict in background...');
+        } else {
+            console.log('Jukugo search disabled by configuration.');
+        }
 
         console.log('Application initialized successfully');
     } catch (error) {

@@ -1,5 +1,5 @@
 // js/stepProgress.js
-
+import { DOM_IDS } from './config.js';
 import { showOptionsView } from './uiControls.js'; // Import the function to show the options panel
 
 // --- Helpers ---
@@ -20,20 +20,43 @@ export function updateStepDescriptionText(stepIndex, isComplete) {
     if (!steps[stepIndex]) return;
 
     const descriptionEl = steps[stepIndex].querySelector('.step-description');
-    const originalText = descriptionEl.textContent.replace(' ✓', '').trim();
-
     let baseText;
+    let detailText = '';
+    let detailClass = '';
+
+    // Determine base text and dynamic detail
     if (stepIndex === 0) {
-        baseText = "Source";
+        // STEP 1: Input Method / Source List
+        const inputMethod = document.getElementById('inputMethod')?.value;
+        if (inputMethod === 'custom') {
+            baseText = "Your List";
+        } else {
+            baseText = "Source";
+            detailText = getSelectedSystemName(DOM_IDS.sourceSystem);
+            detailClass = 'source-detail';
+        }
     } else if (stepIndex === 1) {
-        baseText = "Your Kanji";
+        // STEP 2: Progress Index (Stays constant)
+        baseText = "Order";
     } else if (stepIndex === 2) {
-        baseText = "Compare";
+        // STEP 3: Comparison List
+        baseText = "Compare With";
+        detailText = getSelectedSystemName(DOM_IDS.comparisonSystem);
+        detailClass = 'comparison-detail';
     } else {
         return;
     }
 
-    descriptionEl.textContent = isComplete ? (baseText + ' ✓') : baseText;
+    // Construct the final text: Base Text + Detail Text (System Name)
+    let finalText = isComplete ? (baseText + ' ✓') : baseText;
+
+    // Append the system name if available
+    if (detailText) {
+        // Use a <br> for better layout inside the small progress step circle
+        finalText += `<br><span class="system-detail ${detailClass}">${detailText}</span>`;
+    }
+
+    descriptionEl.innerHTML = finalText; // Use innerHTML to render the <br> and <span>
 }
 
 // --- Validation Functions ---
@@ -109,6 +132,21 @@ export function switchStep(stepIndex) {
     // 4. Update overall step status 
     updateStepVisibility();
 }
+
+/**
+ * Helper to get the display name of the selected system.
+ */
+function getSelectedSystemName(systemId) {
+    const systemEl = document.getElementById(systemId);
+    if (systemEl && systemEl.options[systemEl.selectedIndex]) {
+        // Return the display text of the selected option
+        const selectedOption = systemEl.options[systemEl.selectedIndex];
+        if (selectedOption.value === "") return ""; // Handle placeholder selection
+        return selectedOption.text;
+    }
+    return "";
+}
+
 
 export function updateStepVisibility() {
     const steps = document.querySelectorAll('.progress-step');

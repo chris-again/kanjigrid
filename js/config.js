@@ -394,3 +394,5 @@ export const CSS_CLASSES = {
     dropdownShow: 'show',
     loading: 'loading'
 };
+
+export const ENABLE_JUKUGO_SEARCH = false;

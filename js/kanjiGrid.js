@@ -113,10 +113,18 @@ export function getMasterKanjiList() {
   return masterKanjiList;
 }
 
-export function renderStats(results) {
+export function renderStats(results,sourceTotalKanji) {
   const statsEl = document.getElementById(DOM_IDS.stats);
   const total = results.learned.length + results.unlearned.length;
+  const totalStudied = results.learned.length + results.userOnly.length;
   const progress = total > 0 ? Math.round((results.learned.length / total) * 100) : 0;
+
+  console.log(total,totalStudied,progress);
+
+
+  const learnedPercentOfSource = sourceTotalKanji> 0 
+        ? Math.round((totalStudied / sourceTotalKanji) * 100) 
+        : 0;
 
   // Get the current system name from the source system dropdown
   const systemEl = document.getElementById(DOM_IDS.sourceSystem);
@@ -128,27 +136,49 @@ export function renderStats(results) {
 
   const systemKey = systemEl.value;
   const comparisonKey = comparisonSystemEl.value;
-  
+
   const systemAbbr = getSystemAbbr(systemKey);
   const comparisonAbbr = getSystemAbbr(comparisonKey);
-  
-  document.getElementById('statsSection').querySelector('.stats-header').innerHTML  =
-      `${systemAbbr} vs ${comparisonAbbr}`;
-  
+
+
+  document.getElementById('statsSection').querySelector('.stats-header').innerHTML =
+    // Include the subtle explanation of the grid order
+    `<p class="explanation">Kanji order is based on the Source list.</p>`;
+
 
   statsEl.innerHTML = `
-        <div class="stat-card coverage">
-          <span class="stat-number">${results.learned.length}</span>
-          <span class="stat-label">You know ${progress}% of ${comparisonAbbr}</span>
-        </div>
-        <div class="stat-card missing">
-          <span class="stat-number">${results.unlearned.length}</span>
-          <span class="stat-label">To learn from ${comparisonAbbr}</span>
-        </div>
-        <div class="stat-card extra">
-        <span class="stat-number">${results.userOnly.length}</span>
-        <span class="stat-label">Extra from ${systemAbbr}</span>
-        </div>`;
+  
+  <div class="stats-panel user-source">
+      <h4 class="panel-title"><b>From</b> ${systemName}</h4>
+      
+      <div class="stat-card coverage">
+          <span class="stat-label">I know</span>
+          <span class="stat-number">${totalStudied}</span>
+          <span class="stat-percent">(${learnedPercentOfSource}%)</span>
+      </div>
+
+      <div class="stat-card extra">
+          <span class="stat-number">${results.userOnly.length}</span>
+          <span class="stat-label">Extra not in ${comparisonAbbr}</span>
+      </div>
+  </div>
+
+  <div class="stats-panel comparison-target">
+  <h4 class="panel-title"><b>Of</b> ${comparisonSystemName}</h4>
+  
+  <div class="stat-card coverage">
+  <span class="stat-label">I know</span> 
+      <span class="stat-number">${results.learned.length}</span>
+          <span class="stat-percent">(${progress}% Coverage)</span>
+      </span>
+  </div>
+
+  <div class="stat-card missing">
+      <span class="stat-number">${results.unlearned.length}</span>
+      <span class="stat-label">Missing Kanji to Learn</span>
+  </div>
+</div>
+`;
 }
 
 export function showStatsSection() {
