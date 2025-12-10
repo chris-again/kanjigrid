@@ -39,6 +39,7 @@
     --shadow-subtle: rgba(44, 24, 16, 0.1);
     --sourceList: #7e735f;
     --targetList: #5f6a7e;
+    --inputMethod: #5f7e7e;
 
     --header-fixed-height: 70px;
 }
@@ -462,6 +463,14 @@ h1 {
     white-space: normal;
     text-overflow: clip;
     word-wrap: break-word;
+}
+
+.progress-step .input-detail {
+    color: white;
+    background-color: var(--inputMethod);
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    padding: 3px;
 }
 
 .progress-step .source-detail {
