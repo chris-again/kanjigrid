@@ -6,7 +6,7 @@ import { showOptionsView } from './uiControls.js'; // Import the function to sho
 
 export function hasSelectedValue(id) {
     const element = document.getElementById(id);
-    return element && element.value !== "" && element.value !== "SELECT SEQUENCE...";
+    return element && element.value !== "" && element.value !== "Select...";
 }
 
 export function hasCheckedLevels(menuId) {
@@ -44,10 +44,12 @@ export function updateStepDescriptionText(stepIndex, isComplete) {
             baseText = "Source";
             detailText = getSelectedSystemName(DOM_IDS.sourceSystem);
             detailClass = 'source-detail';
-        } else {
+        } else if (inputMethod === 'custom') {
             baseText = "Source";
             detailText = "My List";
             detailClass = 'source-detail';
+        } else {
+            baseText = "Source";
         }
     } else if (stepIndex === 2) {
         // STEP 3: Comparison List
@@ -81,8 +83,15 @@ export function isStep2Valid() {
 
     if (inputMethod === 'index') {
         const hasSystem = hasSelectedValue('sourceSystem');
+
+        // Check levels
         const hasLevels = hasCheckedLevels('sourceLevelMenu');
-        const hasProgressIndex = document.getElementById('progressIndex')?.value.trim() !== '';
+
+        // Check index number
+        const indexVal = document.getElementById('progressIndex')?.value;
+        const hasProgressIndex = indexVal && indexVal.trim() !== '';
+
+        // OR condition
         return hasSystem && (hasLevels || hasProgressIndex);
 
     } else if (inputMethod === 'custom') {
