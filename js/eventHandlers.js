@@ -41,6 +41,7 @@ export function setupEventListeners() {
     setupMobilePanelListeners();
     setupProgressStepListeners();
     setupHeaderClickListener();
+    setupStatsToggleListener();
 
     // Listener for Custom Kanji Textarea (needs to be checked on input)
     document.getElementById(DOM_IDS.customKanji)?.addEventListener('input', checkCanVisualize);
@@ -526,6 +527,42 @@ function setupProgressStepListeners() {
     // Initial Setup Calls:
     updateStepVisibility();
     switchStep(0);
+}
+
+/**
+ * Setup stats panel collapse/expand toggle
+ */
+function setupStatsToggleListener() {
+    const stats = document.getElementById('stats');
+    
+    if (stats) {
+        // Start collapsed - hide panels immediately
+        stats.classList.add('collapsed');
+        const panels = stats.querySelectorAll('.stats-panel');
+        panels.forEach(panel => {
+            panel.style.display = 'none';
+        });
+        
+        // Toggle on click of the ::before element area
+        stats.addEventListener('click', function(e) {
+            // Only toggle if clicking near the top (::before area) or if already collapsed
+            const rect = stats.getBoundingClientRect();
+            const clickY = e.clientY - rect.top;
+            
+            // If collapsed, allow click anywhere; if expanded, only top 25px
+            if (stats.classList.contains('collapsed') || clickY < 25) {
+                stats.classList.toggle('collapsed');
+                
+                // Toggle visibility of stats-panel elements
+                const panels = stats.querySelectorAll('.stats-panel');
+                const isCollapsed = stats.classList.contains('collapsed');
+                
+                panels.forEach(panel => {
+                    panel.style.display = isCollapsed ? 'none' : 'flex';
+                });
+            }
+        });
+    }
 }
 
 

@@ -116,8 +116,8 @@ export function getMasterKanjiList() {
 
 // Function to get the current input method (assuming this is where it's defined/available)
 function getCurrentInputMethod() {
-    const inputMethodEl = document.getElementById(DOM_IDS.inputMethod);
-    return inputMethodEl ? inputMethodEl.value : 'index'; // Default to 'index' if not found
+  const inputMethodEl = document.getElementById(DOM_IDS.inputMethod);
+  return inputMethodEl ? inputMethodEl.value : 'index'; // Default to 'index' if not found
 }
 
 export function renderStats(results, sourceTotalKanji) {
@@ -155,9 +155,12 @@ export function renderStats(results, sourceTotalKanji) {
   const comparisonAbbr = getSystemAbbr(comparisonKey);
 
 
-  document.getElementById('statsSection').querySelector('.stats-header').innerHTML =
-    // Include the subtle explanation of the grid order
-    `<p class="explanation">Kanji order is based on the Source list.</p>`;
+  // document.getElementById('statsSection').querySelector('.stats-header').innerHTML =
+  //   // Include the subtle explanation of the grid order
+  //   `<p class="explanation">Kanji order is based on the Source list.</p>`;
+
+  // Save the collapsed state before updating innerHTML
+  const wasCollapsed = statsEl.classList.contains('collapsed');
 
 
   statsEl.innerHTML = `
@@ -193,6 +196,16 @@ export function renderStats(results, sourceTotalKanji) {
   </div>
 </div>
 `;
+
+  // Restore the collapsed state and hide panels if needed
+  if (wasCollapsed) {
+    statsEl.classList.add('collapsed');
+    const panels = statsEl.querySelectorAll('.stats-panel');
+    panels.forEach(panel => {
+      panel.style.display = 'none';
+    });
+  }
+
 }
 
 export function showStatsSection() {
