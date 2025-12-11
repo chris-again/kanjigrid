@@ -705,7 +705,7 @@ textarea {
     background: var(--bg-primary);
     color: var(--text-primary);
     border: none;
-    padding: 15px 15px;
+    padding: 10px 15px;
     border-radius: 8px;
     font-family: 'Press Start 2P', monospace;
     cursor: pointer;
@@ -901,6 +901,7 @@ textarea {
     justify-content: flex-start;
     flex-wrap: wrap;
     row-gap: 10px;
+    padding-bottom: 0;
 }
 
 #checkbox-group input {
@@ -1012,10 +1013,11 @@ textarea {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
     gap: 5px;
-    margin-bottom: 10px;
     border: 3px solid var(--border-primary);
     position: relative;
     font-size: 0.9rem;
+    border-radius: 10px;
+    padding-top: 20px;
 }
 
 .stats-header {
@@ -1027,29 +1029,36 @@ textarea {
 }
 
 .stats::before {
-    content: "STATISTICS";
+    content: "STATISTICS ▼ (click to collapse)";
     position: absolute;
-    top: -10px;
     left: 0;
     font-size: 0.7em;
     background-color: var(--bg-primary);
     color: var(--text-primary);
     padding: 5px 0;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+    border-radius: 10px;
     line-height: 0.9;
     min-width: 100%;
     letter-spacing: 2px;
     text-indent: 10px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s ease;
+}
+
+.stats.collapsed::before {
+    content: "STATISTICS ▲ (click to expand)";
 }
 
 .stats-panel {
     padding: 5px;
     border: 2px solid #fafafa;
-    border-radius: 8px;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    transition: opacity 0.3s ease;
+    z-index: 900;
 }
 
 .user-source {
@@ -1507,7 +1516,8 @@ body.fullscreen-body {
 .container.fullscreen-mode #errorSection,
 .container.fullscreen-mode .pixel-border,
 .container.fullscreen-mode .corner
+
 /* .container.fullscreen-mode+.panels-container */
-{
+    {
     display: none !important;
 }
