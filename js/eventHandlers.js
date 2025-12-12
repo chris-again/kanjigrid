@@ -312,7 +312,7 @@ function updateDropdownDisplayText(menuId, textId) {
         const numKanji = parseInt(progressValue);
         textSpan.textContent = `First ${numKanji} kanji selected`;
         // You might want to style this differently to indicate the number input is overriding the levels
-        textSpan.style.color = 'var(--gold-accent)'; 
+        textSpan.style.color = 'var(--gold-accent)';
         return; // Stop processing the rest of the dropdown logic
     }
 
@@ -455,15 +455,30 @@ function setupMobilePanelListeners() {
     };
 
     // --- Touch Events ---
-    panelHeader.addEventListener('touchstart', (e) => handleStart(e.touches[0].clientY));
-    panelHeader.addEventListener('touchmove', (e) => handleMove(e.touches[0].clientY));
-    panelHeader.addEventListener('touchend', (e) => handleEnd(e.changedTouches[0].clientY));
+    panelHeader.addEventListener('touchstart', (e) => {
+        // Don't prevent if clicking close button
+        if (e.target.closest('.close-btn')) return;
+
+        e.preventDefault(); 
+        handleStart(e.touches[0].clientY);
+    }, { passive: false }); 
+
+    panelHeader.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault(); 
+        handleMove(e.touches[0].clientY);
+    }, { passive: false }); 
+
+    panelHeader.addEventListener('touchend', (e) => {
+        if (!isDragging) return;
+        handleEnd(e.changedTouches[0].clientY);
+    });
 
     // --- Mouse Events (for Desktop Dragging) ---
     panelHeader.addEventListener('mousedown', (e) => handleStart(e.clientY));
     window.addEventListener('mousemove', (e) => {
         if (isDragging) {
-            e.preventDefault(); // prevent selecting text while dragging
+            e.preventDefault(); 
             handleMove(e.clientY);
         }
     });
@@ -534,7 +549,7 @@ function setupProgressStepListeners() {
  */
 function setupStatsToggleListener() {
     const stats = document.getElementById('stats');
-    
+
     if (stats) {
         // Start collapsed - hide panels immediately
         stats.classList.add('collapsed');
@@ -542,21 +557,21 @@ function setupStatsToggleListener() {
         panels.forEach(panel => {
             panel.style.display = 'none';
         });
-        
+
         // Toggle on click of the ::before element area
-        stats.addEventListener('click', function(e) {
+        stats.addEventListener('click', function (e) {
             // Only toggle if clicking near the top (::before area) or if already collapsed
             const rect = stats.getBoundingClientRect();
             const clickY = e.clientY - rect.top;
-            
+
             // If collapsed, allow click anywhere; if expanded, only top 25px
             if (stats.classList.contains('collapsed') || clickY < 25) {
                 stats.classList.toggle('collapsed');
-                
+
                 // Toggle visibility of stats-panel elements
                 const panels = stats.querySelectorAll('.stats-panel');
                 const isCollapsed = stats.classList.contains('collapsed');
-                
+
                 panels.forEach(panel => {
                     panel.style.display = isCollapsed ? 'none' : 'flex';
                 });
