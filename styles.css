@@ -109,6 +109,7 @@ body {
     max-height: 85vh;
     transform: translateY(110%);
     transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    overscroll-behavior: contain;
 }
 
 /* The Active State (Triggered by JS) */
@@ -125,6 +126,9 @@ body {
     flex-shrink: 0;
     cursor: grab;
     position: relative;
+    touch-action: none; 
+    -webkit-user-select: none; 
+    user-select: none;
 }
 
 .panel-header:active {
@@ -149,7 +153,6 @@ body {
     position: absolute;
     right: 20px;
     top: 50%;
-    transform: translateY(-50%);
     background: rgba(255, 255, 255, 0.1);
     border: none;
     color: #fff;
@@ -1429,7 +1432,7 @@ h4.panel-title {
         grid-template-columns: repeat(auto-fill, minmax(16px, max-content));
         justify-content: center;
         gap: 1px;
-        padding: 2px;
+        margin: 0 3px;
     }
 
     .kanji {
@@ -1497,11 +1500,9 @@ body.fullscreen-body {
     overflow-y: auto;
     z-index: 50;
     padding-bottom: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
     padding-top: var(--header-fixed-height);
     justify-content: unset;
-    grid-template-columns: repeat(auto-fill, minmax(16px, 1fr));
+    transform: translateX(-5px);
 }
 
 .container.fullscreen-mode #kanjiGrid .kanji {
